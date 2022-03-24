@@ -1,7 +1,7 @@
 from nltk.parse import RecursiveDescentParser
 from nltk import CFG, pos_tag, word_tokenize
-
 string = "S -> 'a' S | T\nT -> 'b' T | $"
+
 
 noDollarString = string.replace('$','')
 grammar = CFG.fromstring(noDollarString)
@@ -51,37 +51,63 @@ def getSigma(string,Q):
 
 #print(f"sigma = {getSigma(string,Q)}")
 
-def getInitialState(string):
+def getInitialState(string,Q):
     return string[0]
 #print("Initial State = "+getInitialState(string))
 
-def getFinalState(string):
+def getFinalState(string,sigma):
     F =[]
     
+    stringcopy = string
     string = string.split("\n")
+    #if there is only a single aphabet as transition
+    #it is also a final state
+    newsigma =[]
+    for x in sigma:
+        newsigma.append("|"+x)
+        newsigma.append(">"+x)
     
+    i=0
+    stringcopy = stringcopy.split("\n")
+    while(i<len(stringcopy)):
+        stringcopy[i] = stringcopy[i].replace("'","").replace(" ","")
+        stringcopy[i]=stringcopy[i][-2:]
+        i=i+1
+
+    i=0
+    while(i<len(stringcopy)):
+        print(stringcopy[i] in newsigma)
+        if (stringcopy[i] in newsigma):
+            F.append(string[i][0])
+        i=i+1
+    
+    #print(f"newsigma = {newsigma}")   
+    #print(f"stringcopy = {stringcopy}")
+
+            
     #if there is epsilon it must be a final state
     i=0
     while(i<len(string)):
         if(string[i].find("$")!=-1):
             F.append(string[i][0])
         i=i+1
+
     #if you can go directly to the final state from
     #another state, then it is also a final state
     Fcopy=F
     i=0
     for word in Fcopy:
-        word = " "+word
+        #word = " "+word
         while(i<len(string)):
             if(string[i].find(word)!=-1):
                 if(string[i][0] not in F):
                     F.append(string[i][0])  
             i=i+1 
-    
+
     return F
 
-
-#print(f"Final State = {getFinalState(string)}")
+#getFinalState(string,sigma)
+print(f"Final State = {getFinalState(string,sigma)}")
 
 def getDelta(string,Q,sigma):
     delta={}
@@ -97,7 +123,7 @@ def getDelta(string,Q,sigma):
 
     for line in string:
         line = line[5:].replace("'","").replace(" ","").split("|")
-        print(line)
+        #print(line)
 
             
 

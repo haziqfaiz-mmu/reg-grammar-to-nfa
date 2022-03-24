@@ -31,7 +31,7 @@ rd3 = RecursiveDescentParser(grammar3)
 
 sentence1 = 'the cat chased the dog'.split()
 sentence2 = 'the cat chased the dog on the rug'.split()
-sentence3 =  list('aba')
+sentence3 =  list('aaaabbbbb')
 
 #for t in rd.parse(sentence1):
 #     print(t)
@@ -46,5 +46,5 @@ for word in sentence3:
 
 print(correct_grammar)
 
-print(rd3.p)
+print(rd3)
 
