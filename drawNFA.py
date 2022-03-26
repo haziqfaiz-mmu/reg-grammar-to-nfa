@@ -18,7 +18,7 @@ delta = {
 initialState = 'S'
 F = {'T','S'}
 
-automata2 = NFA(Q, sigma, delta, initialState, F)
+automata = NFA(Q, sigma, delta, initialState, F)
 ## This is an example about creating a NFA with the library
-automata2.view("NFA Visualization2")
-print(automata2.isValid())   #True
+automata.view("NFA Visualization2")
+print(automata.isValid())   #True

@@ -1,5 +1,6 @@
 from nltk.parse import RecursiveDescentParser
-from nltk import CFG, pos_tag, word_tokenize
+from nltk import CFG
+
 string = "S -> 'a' S | T\nT -> 'b' T | $"
 
 
@@ -36,7 +37,7 @@ def getState(string):
     Q = set(Q)
     return Q
 
-#print(f"Q = {getState(string)}")
+print(f"Q = {getState(string)}")
 
 def getSigma(string,Q):
     sigma=[]
@@ -49,11 +50,11 @@ def getSigma(string,Q):
     sigma = set(sigma)
     return sigma
 
-#print(f"sigma = {getSigma(string,Q)}")
+print(f"sigma = {getSigma(string,Q)}")
 
 def getInitialState(string,Q):
     return string[0]
-#print("Initial State = "+getInitialState(string))
+print("Initial State = "+getInitialState(string,Q))
 
 def getFinalState(string,sigma):
     F =[]
@@ -76,7 +77,7 @@ def getFinalState(string,sigma):
 
     i=0
     while(i<len(stringcopy)):
-        print(stringcopy[i] in newsigma)
+        #print(stringcopy[i] in newsigma)
         if (stringcopy[i] in newsigma):
             F.append(string[i][0])
         i=i+1
@@ -106,31 +107,38 @@ def getFinalState(string,sigma):
 
     return F
 
-#getFinalState(string,sigma)
 print(f"Final State = {getFinalState(string,sigma)}")
+
 
 def getDelta(string,Q,sigma):
     delta={}
-    string = string.split("\n")
-    #sigma = sigma.add("")
-
-    for line in string:
-        delta[line[0]]={}
-      
+    sigma.add(" ")
+    
+    #built the dictionary
     for state in Q:
+        delta[state]={}
         for letter in sigma:
             delta[state][letter] = []
 
+    string = string.replace(" ","").replace("'","")
+    
+    #find epsilon transition function
+    string = string.split("\n")
+    
     for line in string:
-        line = line[5:].replace("'","").replace(" ","").split("|")
-        #print(line)
+        i=0
+        while(i<len(line)):
+            if (line[i] in sigma and line[i+1] in Q):
+                delta[line[0]][line[i]].append(line[i+1])
+            if(line[i] in Q and line[i-1] not in sigma and i!=0):
+                delta[line[0]][" "].append(line[i])
+            i=i+1
 
-            
 
 
-
+    #print(string)
     return delta
 
-delta = getDelta(noDollarString,Q,sigma)
-print(delta)
+delta = getDelta(string,Q,sigma)
+print(f"delta = {delta}")
 
