@@ -1,7 +1,8 @@
 from nltk.parse import RecursiveDescentParser
 from nltk import CFG
 
-string = "S -> 'a' S | T\nT -> 'b' T | $"
+string = """S -> 'a' S | T
+        T -> 'b'"""
 
 
 noDollarString = string.replace('$','')
@@ -56,13 +57,22 @@ def getInitialState(string,Q):
     return string[0]
 print("Initial State = "+getInitialState(string,Q))
 
-def getFinalState(string,sigma):
+
+def buildStateDict(sigma,newState,delta):
+    delta[newState]={}
+    for letter in sigma:
+        delta[newState][letter] = []
+    return delta[newState]
+
+def getFinalState(string,sigma,Q,delta):
     F =[]
     
+    string = string.replace("\t","").replace(" ","")
     stringcopy = string
     string = string.split("\n")
     #if there is only a single aphabet as transition
-    #it is also a final state
+    #it must lead to a new final state
+    # add new state into Q,F and delta 
     newsigma =[]
     for x in sigma:
         newsigma.append("|"+x)
@@ -73,19 +83,20 @@ def getFinalState(string,sigma):
     while(i<len(stringcopy)):
         stringcopy[i] = stringcopy[i].replace("'","").replace(" ","")
         stringcopy[i]=stringcopy[i][-2:]
+        print("stringcopy = " +stringcopy[i])
         i=i+1
 
     i=0
     while(i<len(stringcopy)):
         #print(stringcopy[i] in newsigma)
         if (stringcopy[i] in newsigma):
-            F.append(string[i][0])
+            F.append("New State")
+            Q.add("New State")
+            delta["New State"] = buildStateDict(sigma,"New State",delta)
+
+        print("string[i] = "+string[i])
         i=i+1
     
-    #print(f"newsigma = {newsigma}")   
-    #print(f"stringcopy = {stringcopy}")
-
-            
     #if there is epsilon it must be a final state
     i=0
     while(i<len(string)):
@@ -105,9 +116,9 @@ def getFinalState(string,sigma):
                     F.append(string[i][0])  
             i=i+1 
 
-    return F
+    return [Q,F,delta]
 
-print(f"Final State = {getFinalState(string,sigma)}")
+print(f"Final State = {getFinalState(string,sigma,Q,delta)}")
 
 
 def getDelta(string,Q,sigma):
@@ -127,7 +138,7 @@ def getDelta(string,Q,sigma):
     
     for line in string:
         i=0
-        while(i<len(line)):
+        while(i<len(line)-1):
             if (line[i] in sigma and line[i+1] in Q):
                 delta[line[0]][line[i]].append(line[i+1])
             if(line[i] in Q and line[i-1] not in sigma and i!=0):

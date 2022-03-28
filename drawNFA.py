@@ -1,24 +1,32 @@
 from automathon import NFA
 
 ## Epsilon Transition is denoted by '' -> Empty string
-Q = {'S', 'T'}
-sigma = {'a', 'b'}
+Q = {'q1', 'q2', 'q3', 'q4'}
+sigma = {'0', '1'}
 delta = {
-          'S' : {
-                  'a' : ['S'],
-                  '' : ['T'],
-                  'b' : []
+          'q1' : {
+                  '0' : ['q1'],
+                  '1' : ['q1', 'q2']
                   },
-          'T' : {
-                  'a' : [],
-                  'b' : ['T'],
-                   '' : []
+          'q2' : {
+                  '0' : ['q3'],
+                  '' : ['q3']
+                  },
+          'q3' : {
+                  '1' : ['q4'],
+                  },
+          'q4' : {
+                  '0' : ['q4'],
+                  '1' : ['q4'],
                   },
         }
-initialState = 'S'
-F = {'T','S'}
+initialState = 'q1'
+F = {'q4'}
 
-automata = NFA(Q, sigma, delta, initialState, F)
+nfa = NFA(Q, sigma, delta, initialState, F)
+noepsilon = nfa.removeEpsilonTransitions()
+dfa = nfa.getDFA()
 ## This is an example about creating a NFA with the library
-automata.view("NFA Visualization2")
-print(automata.isValid())   #True
+nfa.view("NFA Visualization")
+noepsilon.view("No Epsilon NFA")
+dfa.view("DFA")
