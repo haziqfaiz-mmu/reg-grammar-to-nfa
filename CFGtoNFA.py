@@ -82,17 +82,18 @@ def getFinalState(string,sigma,Q,delta):
     stringcopy = stringcopy.split("\n")
     while(i<len(stringcopy)):
         stringcopy[i] = stringcopy[i].replace("'","").replace(" ","")
-        stringcopy[i]=stringcopy[i][-2:]
+        stringcopy[i]=stringcopy[i][0]+stringcopy[i][3]+stringcopy[i][-2:]
         print("stringcopy = " +stringcopy[i])
         i=i+1
 
     i=0
     while(i<len(stringcopy)):
         #print(stringcopy[i] in newsigma)
-        if (stringcopy[i] in newsigma):
+        if (stringcopy[i][-2:] in newsigma):
             F.append("New State")
             Q.add("New State")
             delta["New State"] = buildStateDict(sigma,"New State",delta)
+            delta[stringcopy[i][0]][stringcopy[i][1]].append("New State")
 
         print("string[i] = "+string[i])
         i=i+1
